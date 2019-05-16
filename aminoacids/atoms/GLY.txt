@@ -1,0 +1,5 @@
+N NH 
+CA CH
+C C
+O O
+OXT OH
