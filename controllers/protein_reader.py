@@ -15,7 +15,7 @@ warnings.simplefilter('ignore', BiopythonWarning)
 def load_amino_files(filepath):
     amino_dir_path = Path(filepath)
     if amino_dir_path.is_dir():
-        os.chdir(amino_dir_path)
+        os.chdir(str(amino_dir_path))
         amino_dir = os.listdir()
     else:
         sys.exit(-1)
@@ -51,7 +51,6 @@ def load_amino_description_data(filepath):
     cx = [x.split('\t') for x in bx]
     x = numpy.asarray(cx)
     number = x[:, 0]
-    atom_group = x[:, 1]
     coef0 = x[:, 3]
     coef1 = x[:, 4]
     coef2 = x[:, 5]
@@ -60,14 +59,14 @@ def load_amino_description_data(filepath):
     coef5 = x[:, 8]
     coef6 = x[:, 9]
     coef7 = x[:, 10]
-    amino_info = numpy.column_stack((number, atom_group, coef0, coef1, coef2, coef3, coef4, coef5, coef6, coef7))
+    coef8 = x[:, 11]
+    amino_info = numpy.column_stack((number, coef0, coef1, coef2, coef3, coef4, coef5, coef6, coef7, coef8))
     return amino_info
 
 
 def load_pdb_data(filename, filepath):
     pdb_parser = PDBParser(PERMISSIVE=1)
     pdb_structure = pdb_parser.get_structure(filename, filepath)
-
     aminoacid_data = []
 
     for model in pdb_structure.get_list():
@@ -88,8 +87,6 @@ def get_protein_data(protein_data):
     protein_info = load_amino_files(config.AMINOACID_PATH)
     amino_info = load_amino_description_number(config.AMINOACID_INFO_PATH_KNIGHT)
     for atom_i in protein_data:
-        # residue_atom = atom_i[0]
-        # atom_name = atom_i[1]
         for filename in protein_info:
             if atom_i[0] == filename[0:3]:
                 with open(filename) as file:
